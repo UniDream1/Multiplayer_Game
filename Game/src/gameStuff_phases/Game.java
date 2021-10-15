@@ -149,7 +149,6 @@ public class Game extends Canvas implements Runnable {
 	}
 
 
-
 	public void loadSavedSettingsData() {
 		savedData = (SaveSettingsData) this.savedDataLoader.loadObject("settingsData.ser");
 	}
@@ -181,11 +180,7 @@ public class Game extends Canvas implements Runnable {
 			isRunning = false;
 		}
 	}
-	
-	
-	public void musicManagment() {
-		
-	}
+
 
 	private void tick() {
 		switch (getGameState()) {
@@ -213,6 +208,7 @@ public class Game extends Canvas implements Runnable {
 					this.mainMenuMusicReset = false;
 					this.mainMenuMusicRunning = false;
 				}
+				muteMainMenuMusic(getMenu().isMuted());
 			}
 			break;
 		case Pickphase:
@@ -235,6 +231,12 @@ public class Game extends Canvas implements Runnable {
 			break;
 		default:
 			break;
+		}
+	}
+
+	public void muteMainMenuMusic(boolean mute) {
+		if (this.mainMenuThemeAudioPlayer != null) {
+			this.mainMenuThemeAudioPlayer.Mute(mute);
 		}
 	}
 

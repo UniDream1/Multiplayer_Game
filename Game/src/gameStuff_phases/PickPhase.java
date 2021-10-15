@@ -23,7 +23,6 @@ public class PickPhase {
 	private Rectangle Character2;
 	private Rectangle Character3;
 	private Rectangle Character4;
-
 	private Rectangle cancelButton;
 
 	private RoundRectangle2D proceedButton;
@@ -133,6 +132,10 @@ public class PickPhase {
 							 (this.game.getHeight() / 2 ), (this.game.getWidth() * 0.15), (this.game.getHeight() * 0.09),4,4);
 		
 		this.selectedCharBounds = new Rectangle(2, 0, preScaledRandom[0].getWidth() - 2, preScaledRandom[0].getHeight() );
+
+	
+		
+	
 	}
 
 	public void render(Graphics g) {

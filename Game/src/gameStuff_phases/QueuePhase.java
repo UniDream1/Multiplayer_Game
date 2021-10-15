@@ -2,7 +2,6 @@ package gameStuff_phases;
 
 import java.awt.Font;
 import java.awt.Graphics;
-import java.io.File;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -37,13 +36,6 @@ public class QueuePhase {
 		this.IP = IP;
 	}
 
-	public String getDefaultIP() {
-		if (this.DEFAULT_IP_ADRESS != null) {
-			return this.DEFAULT_IP_ADRESS.toString();
-		} else {
-			return "";
-		}
-	}
 
 	public void setPort(int port) {
 		this.port = port;
@@ -69,7 +61,9 @@ public class QueuePhase {
 	}
 
 	public void startQueuing() {
-
+		
+		setIPAddress(this.game.getSettingsMenu().getIPAddress());
+		
 		Long time = System.currentTimeMillis();
 		while (true) {
 			if (System.currentTimeMillis() - time > 500l) {
@@ -92,7 +86,7 @@ public class QueuePhase {
 
 					}
 				} catch (Exception e) {
-
+					System.out.println(e);
 				}
 				time = System.currentTimeMillis();
 			}

@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 import gameobjects_states.GameState;
 import gameobjects_states.MenuState;
@@ -19,6 +20,7 @@ public class Menu {
 	private Rectangle quitButton;
 	private Rectangle cancelButton;
 	private Rectangle helpButton;
+	private Rectangle volumeButton;
 
 	private Color playButtonColor = Color.white;
 	private Color helpButtonColor = Color.white;
@@ -38,10 +40,15 @@ public class Menu {
 	private final int offsetYY;
 	private final int XSIZED_SCALED;
 	private final int YSIZED_SCALED;
+	private int muteClickcounter;
+
+	private BufferedImage mute;
+	private BufferedImage unmute;
 
 	private Game game;
 
 	private boolean cancelButtoncreated = false;
+	private boolean muted = false;
 
 	public Menu(Game game) {
 		this.game = game;
@@ -69,6 +76,11 @@ public class Menu {
 		cancelButton = new Rectangle(game.getWidth() - (int) ((double) this.game.getWidth() * 10.0 / 192.0),
 				(int) ((double) game.getHeight() * 19.0 / 1080), (int) ((double) this.game.getWidth() * 25.0 / 1920.0),
 				(int) ((double) this.game.getHeight() * 33.0 / 1080.0));
+
+		this.volumeButton = new Rectangle(this.game.getWidth() - 120, this.game.getHeight() - 120, 80, 80);
+
+		this.mute = this.game.getImageLoader().loadImg("/mute.png").getBufferedImage();
+		this.unmute = this.game.getImageLoader().loadImg("/unmute.png").getBufferedImage();
 
 	}
 
@@ -117,6 +129,8 @@ public class Menu {
 			g2d.setColor(getQuitButtonColor());
 			g2d.draw(quitButton);
 
+			g2d.drawImage(muted ? mute : unmute, volumeButton.x, volumeButton.y, null);
+
 		} else { // CancelButton text
 			g2d.setColor(getCancelButtonColor());
 			g2d.setFont(new Font("Arial", Font.PLAIN, 40));
@@ -155,6 +169,10 @@ public class Menu {
 		g.drawString(text, (int) (button.getCenterX() - wo / 2), (int) (button.getCenterY() + ho / 4));
 	}
 
+	public boolean isMuted() {
+		return this.muted;
+	}
+
 	public void onMouseClickedEvent(MouseEvent e) {
 
 		if (e.getButton() == MouseEvent.BUTTON1) {
@@ -175,7 +193,20 @@ public class Menu {
 						setMenuState(MenuState.SETTINGSBUTTON);
 						return;
 						// quitButton
-					} else if (getQuitButtonBounds().contains(e.getPoint())) {
+					} else if (this.volumeButton.contains(e.getPoint())) {
+						this.muteClickcounter++;
+						if (this.muteClickcounter == 1) {
+							this.muted = true;
+							this.game.muteMainMenuMusic(muted);
+						} else if (this.muteClickcounter == 2) {
+							this.muted = false;
+							this.game.muteMainMenuMusic(muted);
+							this.muteClickcounter = 0;
+						}
+
+					}
+
+					else if (getQuitButtonBounds().contains(e.getPoint())) {
 						this.game.setRunning(false);
 						try {
 							Thread.sleep(500);
