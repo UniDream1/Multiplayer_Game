@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-16">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="Images/ops"/>
+	<classpathentry kind="src" path="Images/victory"/>
+	<classpathentry kind="src" path="Images/water"/>
+	<classpathentry kind="src" path="Images/plant"/>
+	<classpathentry kind="src" path="Images/fire"/>
+	<classpathentry kind="src" path="Images/char_select"/>
+	<classpathentry kind="src" path="Sounds"/>
+	<classpathentry excluding="water/|imagesss/|plant/|fire/|char_select/|victory/|ops/" kind="src" path="Images"/>
+	<classpathentry kind="src" path="Gamefiles"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
