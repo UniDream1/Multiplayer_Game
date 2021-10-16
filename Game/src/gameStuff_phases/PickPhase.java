@@ -313,7 +313,9 @@ public class PickPhase {
 					}//build a connection
 					else if(this.proceedButton.getBounds().contains(mousePos)) {	
 						this.game.setGameState(GameState.InQueue);
-					//	this.game.getQueue().startQueuing();
+				
+						this.game.getQueue().startQueuing();
+					
 						random = false;
 					}
 					break;

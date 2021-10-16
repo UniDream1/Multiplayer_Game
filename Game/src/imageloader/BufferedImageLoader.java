@@ -103,6 +103,21 @@ public class BufferedImageLoader {
 
 		return transform.filter(img, scaledImg);
 	}
+	
+	public BufferedImage getScaledImage_W(double width) {
+		double scale = width / 1090;
+
+		BufferedImage scaledImg = new BufferedImage((int) (scale * img.getWidth()), (int) (scale * img.getHeight()),
+				BufferedImage.TYPE_INT_ARGB);
+
+		AffineTransform scaler = new AffineTransform();
+		scaler.scale(scale, scale);
+
+		AffineTransformOp transform = new AffineTransformOp(scaler, AffineTransformOp.TYPE_BILINEAR);
+
+		return transform.filter(img, scaledImg);
+	}
+	
 
 	public BufferedImageLoader setBufferedImage(BufferedImage image) {
 		this.img = image;

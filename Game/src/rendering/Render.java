@@ -40,6 +40,7 @@ public class Render {
 		
 	//	g.setColor(new Color(39,39,42));//background color
 		g.setColor(new Color(7, 11, 20));
+		//g.setColor(new Color(18, 28, 51));
 		g.fillRect(0, 0, screenSize.width, screenSize.height);//rectangle as a background 			// load background image for menu right here
 	
 	

@@ -83,7 +83,7 @@ public class ServerConnectionSource {
 						// push everything
 
 					} else {
-						comsManager.process(incoming);
+						// comsManager.process(incoming);
 					}
 				}
 			} catch (IOException e) {

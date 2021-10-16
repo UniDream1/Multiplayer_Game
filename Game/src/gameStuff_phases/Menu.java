@@ -7,11 +7,13 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Arc2D;
 import java.awt.image.BufferedImage;
 
 import gameobjects_states.GameState;
 import gameobjects_states.MenuState;
 
+@SuppressWarnings("unused")
 public class Menu {
 
 	private Rectangle playButton;
@@ -21,6 +23,15 @@ public class Menu {
 	private Rectangle cancelButton;
 	private Rectangle helpButton;
 	private Rectangle volumeButton;
+	private Rectangle opsRect;
+	private Rectangle fireButton;
+	private Rectangle marijuanaButton;
+	private Rectangle waterButton;
+	private Rectangle rc;
+
+	private Arc2D arcFire;
+	private Arc2D arcPlant;
+	private Arc2D arcWater;
 
 	private Color playButtonColor = Color.white;
 	private Color helpButtonColor = Color.white;
@@ -40,17 +51,25 @@ public class Menu {
 	private final int offsetYY;
 	private final int XSIZED_SCALED;
 	private final int YSIZED_SCALED;
+
 	private int muteClickcounter;
+	private int pX = 20;
 
 	private BufferedImage mute;
 	private BufferedImage unmute;
+	private BufferedImage ops;
 
 	private Game game;
 
 	private boolean cancelButtoncreated = false;
 	private boolean muted = false;
 
+	private boolean waterSeq = false;
+	private boolean plantSeq = false;
+	private boolean fireSeq = false;
+
 	public Menu(Game game) {
+
 		this.game = game;
 
 		this.offsetX = (int) ((double) game.getWidth() * 13.0 / 192.0);
@@ -81,6 +100,29 @@ public class Menu {
 
 		this.mute = this.game.getImageLoader().loadImg("/mute.png").getBufferedImage();
 		this.unmute = this.game.getImageLoader().loadImg("/unmute.png").getBufferedImage();
+
+		this.ops = this.game.getImageLoader().loadImg("/opsPreview.png").getScaledImage_W(0.3d * this.game.getWidth());
+
+		this.opsRect = new Rectangle(0, 0, this.ops.getWidth() + pX, this.game.getHeight());
+
+		this.rc = new Rectangle(pX / 2, (int) (opsRect.getCenterY() - ops.getHeight() / 2), this.ops.getWidth(),
+				this.ops.getHeight());
+
+		int width_height = (int) (0.3d * this.ops.getHeight());
+		int y = (int) (rc.y + rc.getHeight()) - width_height;
+
+		this.fireButton = new Rectangle(pX / 2, y, width_height, width_height);
+
+		this.arcFire = new Arc2D.Double(fireButton, 0, 360, Arc2D.PIE);
+
+		// in honor of snoop dog
+		this.marijuanaButton = new Rectangle(rc.x + rc.width - width_height, y, width_height, width_height);
+
+		this.waterButton = new Rectangle((int) (rc.getCenterX() - width_height / 2), rc.y, width_height, width_height);
+
+		this.arcPlant = new Arc2D.Double(marijuanaButton, 0, 360, Arc2D.PIE);
+
+		this.arcWater = new Arc2D.Double(waterButton, 0, 360, Arc2D.PIE);
 
 	}
 
@@ -138,19 +180,59 @@ public class Menu {
 			// drawText(g2d, "X", cancelButton);
 			g2d.drawString("X", (int) (this.cancelButton.getCenterX() - this.cancelButton.getWidth() / 2),
 					(int) (cancelButton.y + cancelButton.getCenterY() / 2));
-			// cancelButton
-			// g2d.draw(cancelButton);
+
+			// g2d.draw(cancelButton); // cancelButton
 
 			// Characterpreview state
 			if (menuState.equals(MenuState.CHARACTERBUTTON)) {
-				g.setColor(Color.white);
-				g.drawString("operators preview", game.getWidth() / 2 - 150, 500);
+				g2d.setColor(new Color(17, 17, 19));
+				// g2d.setColor(new Color(10, 17, 33));
+				g2d.fill(opsRect);
+
+				g2d.drawImage(this.ops, pX / 2, (int) (opsRect.getCenterY() - ops.getHeight() / 2), null);
+				g2d.setColor(Color.white);
+
+				g2d.draw(rc);
+
+				drawText(g2d, "AEGame", "Defeats: ", "Plant", "Arch enemy: ",
+						"Nothing says 'bring the heat' more than a literal walking inferno. ",
+						"This class will devastate the local ecosystem and leave nothing", "\nbut ashes in it's way.");
+
+				// g2d.draw(fireButton);
+				// g2d.draw(marijuanaButton);
+				// g2d.draw(waterButton);
+
+				// g2d.draw(arcFire);
+				// g2d.draw(arcPlant);
+				// g2d.draw(arcWater);
+
 			} // settings
 			else if (menuState.equals(MenuState.SETTINGSBUTTON)) {
 				this.game.getSettingsMenu().render(g2d);
 			}
 		}
 
+	}
+
+	public void drawText(Graphics2D g, String... str) {
+
+		g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
+		int height = g.getFontMetrics().getHeight();
+		g.drawString(str[0], this.ops.getWidth() + (this.game.getWidth() - this.opsRect.width) / 2
+				- g.getFontMetrics().stringWidth(str[0]) / 2, height + (int) (getHeight_Buttons() * 0.1));
+
+		g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
+		g.setColor(new Color(163, 230, 53));
+		g.drawString(str[1], this.ops.getWidth() + 50, (int) (height * 2));
+
+		g.setColor(new Color(239, 68, 68));
+		int height1 = g.getFontMetrics().getHeight();
+		g.drawString(str[3], this.ops.getWidth() + 50, (int) (height * 1.5) + (int) (height1 * 3));
+
+		g.setColor(Color.white);
+
+		g.drawString(str[4], this.ops.getWidth() + 50, (int) (height * 1.5) + (int) (height1 * 6));
+		
 	}
 
 	public void createCancelButton(Graphics2D g) {
@@ -205,7 +287,7 @@ public class Menu {
 						}
 
 					}
-
+					// sheesh
 					else if (getQuitButtonBounds().contains(e.getPoint())) {
 						this.game.setRunning(false);
 						try {
@@ -214,12 +296,28 @@ public class Menu {
 							e1.printStackTrace();
 						}
 						System.exit(0);// exits the game
-
 					}
 					break;
 
 				case CHARACTERBUTTON:
-					if (getCancelButtonBounds().contains(e.getPoint())) {
+					// fire Button
+					if (this.arcFire.contains(e.getPoint())) {
+						this.fireSeq = true;
+						this.plantSeq = false;
+						this.waterSeq = false;
+
+						// Plant Button
+					} else if (this.arcPlant.contains(e.getPoint())) {
+						this.fireSeq = false;
+						this.plantSeq = true;
+						this.waterSeq = false;
+						// Water button
+					} else if (this.arcWater.contains(e.getPoint())) {
+						this.fireSeq = false;
+						this.plantSeq = false;
+						this.waterSeq = true;
+
+					} else if (getCancelButtonBounds().contains(e.getPoint())) {
 						setMenuState(MenuState.NONE);
 						setCancelButtonColor(Color.white);
 					}

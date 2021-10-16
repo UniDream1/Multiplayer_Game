@@ -36,7 +36,6 @@ public class QueuePhase {
 		this.IP = IP;
 	}
 
-
 	public void setPort(int port) {
 		this.port = port;
 	}
@@ -61,42 +60,32 @@ public class QueuePhase {
 	}
 
 	public void startQueuing() {
-		
+
 		setIPAddress(this.game.getSettingsMenu().getIPAddress());
-		
-		Long time = System.currentTimeMillis();
-		while (true) {
-			if (System.currentTimeMillis() - time > 500l) {
-				try {
 
-					if (IP.isBlank() && (port + "").isBlank()) {
-						connection = new ServerConnectionSource(this.DEFAULT_IP_ADRESS, defaultPort, game);
-						connection.inititateInputChannelThread();
-						this.game.setServerConnectionSource(connection);
+		try {
 
-						break;
-					} else {
-						if (!this.game.getIPVerifier().setIp(IP).isIpAddress()) {
-							
-							connection = new ServerConnectionSource(InetAddress.getByName(IP), this.port, game);
-							connection.inititateInputChannelThread();
-							this.game.setServerConnectionSource(connection);
-							break;
-						}
+			if (!this.game.getIPVerifier().setIp(IP).isIpAddress()) {
 
-					}
-				} catch (Exception e) {
-					System.out.println(e);
+				connection = new ServerConnectionSource(DEFAULT_IP_ADRESS, this.port, game);
+
+				if (connection != null && connection.isConnected()) {
+					connection.inititateInputChannelThread();
+					game.setServerConnectionSource(connection);
+					game.setGameState(GameState.InGame);
+
 				}
-				time = System.currentTimeMillis();
+
+			} else {
+				connection = new ServerConnectionSource(this.DEFAULT_IP_ADRESS, defaultPort, game);
+				connection.inititateInputChannelThread();
+				this.game.setServerConnectionSource(connection);
+
 			}
+		} catch (Exception e) {
+			System.out.println(e);
 		}
 
-		if (connection.isConnected()) {
-			game.setServerConnectionSource(connection);
-			game.setGameState(GameState.InGame);
-
-		}
 	}
 
 }

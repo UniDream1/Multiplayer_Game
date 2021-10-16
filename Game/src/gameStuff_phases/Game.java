@@ -3,15 +3,6 @@ package gameStuff_phases;
 import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Scanner;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 import connection.ServerConnectionSource;
 import connection.Utilities;
@@ -26,7 +17,6 @@ import rendering.Render;
 import saveAndLoad.LoadData;
 import window.Window;
 
-@SuppressWarnings("unused")
 public class Game extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = 8358263811084238555L;
@@ -41,7 +31,7 @@ public class Game extends Canvas implements Runnable {
 
 	private Handler handler;
 
-	private GameState gameState = GameState.Menu;
+	private GameState gameState = GameState.InGame;
 
 	private Menu menu;
 
@@ -73,8 +63,6 @@ public class Game extends Canvas implements Runnable {
 
 	private AudioPlayer mainMenuThemeAudioPlayer, QueuePhaseAudioPlayer;
 
-	private long time = System.currentTimeMillis();
-
 	public Game() {
 		this.window = new Window(screenSize.width, screenSize.height, this);
 
@@ -89,8 +77,6 @@ public class Game extends Canvas implements Runnable {
 		this.savedDataLoader = new LoadData();
 
 		loadSavedSettingsData();
-
-		start();
 
 		this.menu = new Menu(this);
 
@@ -110,6 +96,8 @@ public class Game extends Canvas implements Runnable {
 		this.addKeyListener(keyAdapter);
 
 		this.ipVerfier = new Utilities();
+
+		start();
 
 		this.window.setVisible(true);
 
@@ -148,7 +136,6 @@ public class Game extends Canvas implements Runnable {
 		return audioPlayers;
 	}
 
-
 	public void loadSavedSettingsData() {
 		savedData = (SaveSettingsData) this.savedDataLoader.loadObject("settingsData.ser");
 	}
@@ -180,7 +167,6 @@ public class Game extends Canvas implements Runnable {
 			isRunning = false;
 		}
 	}
-
 
 	private void tick() {
 		switch (getGameState()) {
@@ -269,6 +255,7 @@ public class Game extends Canvas implements Runnable {
 		this.isRunning = running;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void run() {
 

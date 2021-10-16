@@ -84,6 +84,7 @@ public class GameScene {
 		 * 
 		 * }
 		 */
+
 		for (int i = 0; i < this.img.getWidth(); i += gridSize[0]) {
 			for (int j = 0; j < this.img.getHeight(); j += gridSize[1]) {
 
@@ -113,6 +114,7 @@ public class GameScene {
 					continue;
 				}
 			}
+
 		}
 	}
 
