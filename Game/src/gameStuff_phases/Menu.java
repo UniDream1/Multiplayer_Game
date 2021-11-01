@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Arc2D;
@@ -15,6 +17,30 @@ import gameobjects_states.MenuState;
 
 @SuppressWarnings("unused")
 public class Menu {
+	// "Defeats: The dev-team \nArch enemy: The design team\n\n"
+	private final String[] opsDescription = {
+			"Arch enemy: The design team\nDefeats: The dev-team\n\n\nAEGame is a project of the IT-course at the AEG. The game\n"
+					+ "in the genre Run&Chase combines Rock-Paper-Scissors \n"
+					+ "strategizing with reaction time and map strategy.",
+			"Arch enemy: Plant\n" + "Defeats: Fire\n" + "\n\n"
+					+ "The Water character is chilled out even if things get flaming hot,\n"
+					+ "with a cool head they erase any burnmarks of the map.",
+			"Arch enemy: Water\nDefeats: Plant\n" + "\n\n"
+					+ "Nothing says 'bring the heat' more than a literal walking inferno.\n"
+					+ "This class will devastate the local ecosystem and leave nothing \n" + "but ashes in it's way.",
+			"Arch enemy: Fire\nDefeats: Water\n\n\n"
+					+ "On the wasteland of the map this class will do anything to stay hydrated,\n"
+					+ "that the water seems strangely alive is of no relevance to that goal." };
+
+	private final String[] text = { "Aegame", "Water", "Plant", "Fire" };
+
+	private final int Width_Buttons = 100;
+	private final int Height_Buttons = 80;
+	private final int offsetX;
+	private final int offsetY;
+	private final int offsetYY;
+	private final int XSIZED_SCALED;
+	private final int YSIZED_SCALED;
 
 	private Rectangle playButton;
 	private Rectangle characterButton;
@@ -42,18 +68,15 @@ public class Menu {
 
 	private MenuState menuState = MenuState.NONE;
 
+	private float pingAlpha_D = 0.5f;
+
 	private String title = "Chase & Kill";
 
-	private final int Width_Buttons = 100;
-	private final int Height_Buttons = 80;
-	private final int offsetX;
-	private final int offsetY;
-	private final int offsetYY;
-	private final int XSIZED_SCALED;
-	private final int YSIZED_SCALED;
-
 	private int muteClickcounter;
-	private int pX = 20;
+	private int pX = 30;
+	private int currentDesc = 0;
+
+	private float alpha = 40;
 
 	private BufferedImage mute;
 	private BufferedImage unmute;
@@ -63,10 +86,7 @@ public class Menu {
 
 	private boolean cancelButtoncreated = false;
 	private boolean muted = false;
-
-	private boolean waterSeq = false;
-	private boolean plantSeq = false;
-	private boolean fireSeq = false;
+	private boolean waterHover = false, plantHover = false, fireHover = false;
 
 	public Menu(Game game) {
 
@@ -140,41 +160,41 @@ public class Menu {
 					this.playButton.y / 2 - this.playButton.y / 16);
 
 			// playButton text
-			g.setColor(getPlayButtonColor());
+			g.setColor(this.playButtonColor);
 			drawText(g2d, "Play", this.playButton);
 
 			// CharacterButton text
-			g.setColor(getCharaterButtonColor());
-			drawText(g2d, "Operators", characterButton);
+			g.setColor(this.CharaterButtonColor);
+			drawText(g2d, "Description", characterButton);
 
 			// SettingsButton text
-			g.setColor(getSettingsButtonColor());
+			g.setColor(this.settingsButtonColor);
 			drawText(g2d, "Settings", settingsButton);
 
 			// quitButton text
-			g.setColor(getQuitButtonColor());
+			g.setColor(this.quitButtonColor);
 			drawText(g2d, "Quit", quitButton);
 
 			// playButton
-			g2d.setColor(getPlayButtonColor());
+			g2d.setColor(this.playButtonColor);
 			g2d.draw(playButton);
 
 			// characterButton
-			g2d.setColor(getCharaterButtonColor());
+			g2d.setColor(this.CharaterButtonColor);
 			g2d.draw(characterButton);
 
 			// settingsButton
-			g2d.setColor(getSettingsButtonColor());
+			g2d.setColor(this.settingsButtonColor);
 			g2d.draw(settingsButton);
 
 			// quitButton
-			g2d.setColor(getQuitButtonColor());
+			g2d.setColor(this.quitButtonColor);
 			g2d.draw(quitButton);
 
 			g2d.drawImage(muted ? mute : unmute, volumeButton.x, volumeButton.y, null);
 
 		} else { // CancelButton text
-			g2d.setColor(getCancelButtonColor());
+			g2d.setColor(this.cancelButtonColor);
 			g2d.setFont(new Font("Arial", Font.PLAIN, 40));
 			createCancelButton(g2d);
 			// drawText(g2d, "X", cancelButton);
@@ -185,26 +205,51 @@ public class Menu {
 
 			// Characterpreview state
 			if (menuState.equals(MenuState.CHARACTERBUTTON)) {
+
 				g2d.setColor(new Color(17, 17, 19));
-				// g2d.setColor(new Color(10, 17, 33));
 				g2d.fill(opsRect);
 
+				g2d.setColor(new Color(32, 204, 22, !plantHover ? (int) (this.alpha) : 200));
+				g2d.fillOval((int) (this.marijuanaButton.x - this.marijuanaButton.width * 0.05),
+						(int) (this.marijuanaButton.y - this.marijuanaButton.height * 0.05),
+						(int) (this.marijuanaButton.width * 1.1), (int) (this.marijuanaButton.getHeight() * 1.1));
+
+				g2d.setColor(new Color(14, 165, 233, !waterHover ? (int) (this.alpha) : 200));
+				g2d.fillOval((int) (this.waterButton.x - this.waterButton.getWidth() * 0.07),
+						(int) (this.waterButton.y - this.waterButton.getHeight() * 0.05),
+						(int) (this.waterButton.getWidth() * 1.1), (int) (this.waterButton.getHeight() * 1.1));
+
+				g2d.setColor(new Color(239, 68, 68, !fireHover ? (int) (this.alpha) : 200));
+				g2d.fillOval((int) (this.fireButton.x - this.fireButton.getWidth() * 0.05),
+						(int) (this.fireButton.y - this.fireButton.getHeight() * 0.05),
+						(int) (this.fireButton.getWidth() * 1.1), (int) (this.fireButton.getHeight() * 1.1));
+
 				g2d.drawImage(this.ops, pX / 2, (int) (opsRect.getCenterY() - ops.getHeight() / 2), null);
-				g2d.setColor(Color.white);
-
-				g2d.draw(rc);
-
-				drawText(g2d, "AEGame", "Defeats: ", "Plant", "Arch enemy: ",
-						"Nothing says 'bring the heat' more than a literal walking inferno. ",
-						"This class will devastate the local ecosystem and leave nothing", "\nbut ashes in it's way.");
 
 				// g2d.draw(fireButton);
 				// g2d.draw(marijuanaButton);
 				// g2d.draw(waterButton);
 
-				// g2d.draw(arcFire);
-				// g2d.draw(arcPlant);
-				// g2d.draw(arcWater);
+				g2d.setColor(Color.white);
+				int fontSize = (int) ((70.0 / 1920.0) * this.game.getWidth());
+				g2d.setFont(new Font(Font.SANS_SERIF, Font.BOLD, fontSize));
+
+				new Color(fontSize, fontSize, fontSize, fontSize);
+
+				g2d.drawString(text[currentDesc],
+						this.opsRect.width + (this.game.getWidth() - this.opsRect.width) / 2
+								- g2d.getFontMetrics().stringWidth(text[currentDesc]) / 2,
+						g2d.getFontMetrics().getHeight() * 2);
+
+				int Height = 4 * g2d.getFontMetrics().getHeight();
+				int fontSize1 = (int) ((30.0 / 1920.0) * this.game.getWidth());
+				g2d.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, fontSize1));
+
+				int scale1 = (int) (this.opsRect.width + (this.game.getWidth() - this.opsRect.width) / 2 * 0.1);
+
+				drawString(g2d, opsDescription[currentDesc], scale1, Height);
+
+				incrementAlpha();
 
 			} // settings
 			else if (menuState.equals(MenuState.SETTINGSBUTTON)) {
@@ -214,25 +259,44 @@ public class Menu {
 
 	}
 
-	public void drawText(Graphics2D g, String... str) {
+	private void incrementAlpha() {
+		this.alpha += pingAlpha_D;
+		if (this.alpha >= 120) {
+			this.pingAlpha_D *= -1;
+		} else if (this.alpha <= 40) {
+			this.pingAlpha_D *= -1;
+		}
+	}
 
-		g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
-		int height = g.getFontMetrics().getHeight();
-		g.drawString(str[0], this.ops.getWidth() + (this.game.getWidth() - this.opsRect.width) / 2
-				- g.getFontMetrics().stringWidth(str[0]) / 2, height + (int) (getHeight_Buttons() * 0.1));
+	/**
+	 * "Arch enemy: The design team\nDefeats: The dev-team\n\n\nAEGame is a project
+	 * of the IT-course at the AEG. The game\n" + "in the genre Run&Chase combines
+	 * Rock-Paper-Scissors \n" + "strategizing with reaction time and map
+	 * strategy.",
+	 * 
+	 */
 
-		g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
-		g.setColor(new Color(163, 230, 53));
-		g.drawString(str[1], this.ops.getWidth() + 50, (int) (height * 2));
-
-		g.setColor(new Color(239, 68, 68));
-		int height1 = g.getFontMetrics().getHeight();
-		g.drawString(str[3], this.ops.getWidth() + 50, (int) (height * 1.5) + (int) (height1 * 3));
-
-		g.setColor(Color.white);
-
-		g.drawString(str[4], this.ops.getWidth() + 50, (int) (height * 1.5) + (int) (height1 * 6));
-		
+	private void drawString(Graphics g, String text, int x, int y) {
+		for (String line : text.split("\n")) {
+			if (line.startsWith("Arch enemy: ")) {
+				String s = line.substring(0, line.indexOf(":") + 1);
+				g.setColor(new Color(239, 68, 68));
+				g.drawString(s, x, y);
+				g.setColor(new Color(211, 211, 219));
+				g.drawString(line.substring(line.indexOf(":") + 1), x + g.getFontMetrics().stringWidth(s), y);
+				y += g.getFontMetrics().getHeight();
+			} else if (line.startsWith("Defeats: ")) {
+				String s = line.substring(0, line.indexOf(":") + 1);
+				g.setColor(new Color(163, 230, 53));
+				g.drawString(s, x, y);
+				g.setColor(new Color(211, 211, 219));
+				g.drawString(line.substring(line.indexOf(":") + 1), x + g.getFontMetrics().stringWidth(s), y);
+				y += g.getFontMetrics().getHeight();
+			} else {
+				g.setColor(new Color(211, 211, 219));
+				g.drawString(line, x, y += g.getFontMetrics().getHeight());
+			}
+		}
 	}
 
 	public void createCancelButton(Graphics2D g) {
@@ -265,12 +329,12 @@ public class Menu {
 						// play button pressed
 						game.setGameState(GameState.Pickphase);
 						return;
-					} else if (getCharaterButtonBounds().contains(e.getPoint())) {
+					} else if (characterButton.contains(e.getPoint())) {
 						// character preview
 						setMenuState(MenuState.CHARACTERBUTTON);
 						return;
 
-					} else if (getSettingsButtonBounds().contains(e.getPoint())) {
+					} else if (settingsButton.contains(e.getPoint())) {
 						// setting menu
 						setMenuState(MenuState.SETTINGSBUTTON);
 						return;
@@ -288,43 +352,31 @@ public class Menu {
 
 					}
 					// sheesh
-					else if (getQuitButtonBounds().contains(e.getPoint())) {
-						this.game.setRunning(false);
-						try {
-							Thread.sleep(500);
-						} catch (InterruptedException e1) {
-							e1.printStackTrace();
-						}
-						System.exit(0);// exits the game
+					else if (quitButton.contains(e.getPoint())) {
+						this.game.EndGame();
+
 					}
 					break;
-
+				// 1 = water , 2 = Fire , 3= Plant
 				case CHARACTERBUTTON:
 					// fire Button
 					if (this.arcFire.contains(e.getPoint())) {
-						this.fireSeq = true;
-						this.plantSeq = false;
-						this.waterSeq = false;
-
+						this.currentDesc = 3;
 						// Plant Button
 					} else if (this.arcPlant.contains(e.getPoint())) {
-						this.fireSeq = false;
-						this.plantSeq = true;
-						this.waterSeq = false;
+						this.currentDesc = 2;
 						// Water button
 					} else if (this.arcWater.contains(e.getPoint())) {
-						this.fireSeq = false;
-						this.plantSeq = false;
-						this.waterSeq = true;
-
-					} else if (getCancelButtonBounds().contains(e.getPoint())) {
+						this.currentDesc = 1;
+					} else if (cancelButton.contains(e.getPoint())) {
 						setMenuState(MenuState.NONE);
 						setCancelButtonColor(Color.white);
+						this.currentDesc = 0;
 					}
 					break;
 				case SETTINGSBUTTON:
 					this.game.getSettingsMenu().onMouseClickedEvent(e);
-					if (getCancelButtonBounds().contains(e.getPoint())) {
+					if (cancelButton.contains(e.getPoint())) {
 						setMenuState(MenuState.NONE);
 						setCancelButtonColor(Color.white);
 					}
@@ -355,38 +407,48 @@ public class Menu {
 				if (playButton.getBounds().contains(e.getPoint())) {
 					setPlayButtonColor(Color.blue);
 				} else setPlayButtonColor(Color.white);
-				if (getSettingsButtonBounds().contains(e.getPoint())) {
+				if (settingsButton.contains(e.getPoint())) {
 					setSettingsButtonColor(Color.green);
 				} else setSettingsButtonColor(Color.white);
 					
-				if (getQuitButtonBounds().contains(e.getPoint())) {
+				if (quitButton.contains(e.getPoint())) {
 					setQuitButtonColor(Color.red);
 				} else setQuitButtonColor(Color.white);
 					
-				if (getCharaterButtonBounds().contains(e.getPoint())) {
+				if (characterButton.contains(e.getPoint())) {
 					setCharaterButtonColor(Color.yellow);
 				} else setCharaterButtonColor(Color.white);
 				break;
 				
 			case CHARACTERBUTTON:
-				if(getCancelButtonBounds().contains(e.getPoint())) {
+				if(cancelButton.contains(e.getPoint())) {
 							setCancelButtonColor(Color.red);
 				} else setCancelButtonColor(Color.white);
 					
+				// fire Button
+				if (this.arcFire.contains(e.getPoint())) {
+					this.fireHover = true;
+				}else fireHover = false;
+					
+					// Plant Button
+				if (this.arcPlant.contains(e.getPoint())) {
+					this.plantHover= true;
+				}else plantHover = false;
+				// Water button
+				if (this.arcWater.contains(e.getPoint())) {
+					this.waterHover = true;
+				} else waterHover = false;
 			break;
 			
 			case SETTINGSBUTTON:
 				this.game.getSettingsMenu().onMouseMovedEvent(e);
-
-				if(getCancelButtonBounds().contains(e.getPoint())) {
+				if(cancelButton.contains(e.getPoint())) {
 					setCancelButtonColor(Color.red);
 				} else setCancelButtonColor(Color.white);
 				break;
-			
 			default:
 				break;
 			}
-	
 		}
 		// @formatter:on
 	}
@@ -414,79 +476,28 @@ public class Menu {
 		this.menuState = menuState;
 	}
 
-	public Color getPlayButtonColor() {
-		return playButtonColor;
-	}
-
 	public void setPlayButtonColor(Color playButtonColor) {
 		this.playButtonColor = playButtonColor;
-	}
-
-	public Color getHelpButtonColor() {
-		return helpButtonColor;
 	}
 
 	public void setHelpButtonColor(Color helpButtonColor) {
 		this.helpButtonColor = helpButtonColor;
 	}
 
-	public Color getCharaterButtonColor() {
-		return CharaterButtonColor;
-	}
-
 	public void setCharaterButtonColor(Color charaterButtonColor) {
 		CharaterButtonColor = charaterButtonColor;
-	}
-
-	public Color getSettingsButtonColor() {
-		return settingsButtonColor;
 	}
 
 	public void setSettingsButtonColor(Color settingsButtonColor) {
 		this.settingsButtonColor = settingsButtonColor;
 	}
 
-	public Color getQuitButtonColor() {
-		return quitButtonColor;
-	}
-
 	public void setQuitButtonColor(Color quitButtonColor) {
 		this.quitButtonColor = quitButtonColor;
-	}
-
-	public Color getCancelButtonColor() {
-		return cancelButtonColor;
 	}
 
 	public void setCancelButtonColor(Color cancelButtonColor) {
 		this.cancelButtonColor = cancelButtonColor;
 	}
 
-	public Rectangle getHelpButtonBounds() {
-		return helpButton;
-	}
-
-	public Rectangle getCharaterButtonBounds() {
-		return characterButton;
-	}
-
-	public Rectangle getSettingsButtonBounds() {
-		return settingsButton;
-	}
-
-	public Rectangle getQuitButtonBounds() {
-		return quitButton;
-	}
-
-	public Rectangle getCancelButtonBounds() {
-		return cancelButton;
-	}
-
-	public int getWidth_Buttons() {
-		return Width_Buttons;
-	}
-
-	public int getHeight_Buttons() {
-		return Height_Buttons;
-	}
 }

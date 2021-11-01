@@ -6,6 +6,7 @@ import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -15,7 +16,7 @@ public class BufferedImageLoader {
 
 	public BufferedImage loadImage(String path) {
 		try {
-			this.img = ImageIO.read(getClass().getResource(path));
+			this.img = ImageIO.read(new File(path).toURI().toURL());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -28,6 +29,15 @@ public class BufferedImageLoader {
 	public BufferedImageLoader loadImg(String path) {
 		try {
 			this.img = ImageIO.read(getClass().getResource(path));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return this;
+	}
+
+	public BufferedImageLoader load_Image(String path) {
+		try {
+			this.img = ImageIO.read(new File(path).toURI().toURL());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -69,7 +79,6 @@ public class BufferedImageLoader {
 	 * @param original_Height: original height
 	 * @return
 	 */
-
 	public BufferedImage getScaledImage(double width, double height, double original_Width, double original_Height) {
 		double xScale = width / original_Width;
 		double yScale = height / original_Height;
@@ -85,7 +94,8 @@ public class BufferedImageLoader {
 	}
 
 	/**
-	 * just for a specific type of image, not for general scaling purposes
+	 * just for a specific type of image, not for general scaling purposes. Scales
+	 * the image based on the given Height.
 	 * 
 	 * @param height
 	 * @return BufferedImage
@@ -103,7 +113,13 @@ public class BufferedImageLoader {
 
 		return transform.filter(img, scaledImg);
 	}
-	
+
+	/**
+	 * scales the image based on the desired {width}.
+	 * 
+	 * @param width
+	 * @return
+	 */
 	public BufferedImage getScaledImage_W(double width) {
 		double scale = width / 1090;
 
@@ -117,7 +133,10 @@ public class BufferedImageLoader {
 
 		return transform.filter(img, scaledImg);
 	}
-	
+
+	public BufferedImage getScaledInstance(int width, int height) {
+		return toBufferedImage(img.getScaledInstance(width, height, Image.SCALE_DEFAULT));
+	}
 
 	public BufferedImageLoader setBufferedImage(BufferedImage image) {
 		this.img = image;

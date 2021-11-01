@@ -21,7 +21,9 @@ public class Handler {
 			gameObject.render(g);
 		});
 		charactersList.forEach(character -> {
-			character.render(g);
+			if (character != null) {
+				character.render(g);
+			}
 		});
 	}
 

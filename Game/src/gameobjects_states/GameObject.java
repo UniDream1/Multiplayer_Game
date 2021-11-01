@@ -15,6 +15,8 @@ public abstract class GameObject {
 	private int oldX;
 	private int oldY;
 
+	private int hp;
+
 	public GameObject(int x, int y, Type type, int id) {
 		this.x = x;
 		this.y = y;
@@ -48,6 +50,15 @@ public abstract class GameObject {
 		return y;
 	}
 
+	public int getHp() {
+		return hp;
+	}
+
+	public GameObject setHp(int hp) {
+		this.hp = hp;
+		return this;
+	}
+
 	public int getxVel() {
 		return xVel;
 	}
@@ -77,5 +88,5 @@ public abstract class GameObject {
 	public Point getPreviousCoordinates() {
 		return new Point(this.oldX, this.oldY);
 	}
-	
+
 }

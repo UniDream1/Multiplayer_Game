@@ -4,10 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
 
 import gameStuff_phases.Game;
+import gameobjects_states.Type;
+import push_Data_toServer.DataOutputChannel;
 
 public class ServerConnectionSource {
 
@@ -19,8 +20,7 @@ public class ServerConnectionSource {
 
 	private ComsManager comsManager;
 
-	@SuppressWarnings("unused")
-	private static final String LOG_OFF_NOTIFICATION = "logoff /server:remote_computer_";
+	private DataOutputChannel dataChannel;
 
 	public ServerConnectionSource(String IP_Address, int port, Game game) {
 
@@ -36,33 +36,27 @@ public class ServerConnectionSource {
 			comsManager = new ComsManager(game);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(e);
 		}
 
 	}
 
-	public ServerConnectionSource(InetAddress IP, int port, Game game) {
-
-		try {
-			connection = new Socket(IP, port);
-
-			System.out.println("connected!");
-
-			inputChannel = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-			outputChannel = new PrintWriter(connection.getOutputStream());
-
-			comsManager = new ComsManager(game);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	public void sendType(String type) {
+	public void sendPlayerType(Type type) {
 		if (this.outputChannel != null) {
-			sendMsg("type:" + type);
+			sendMsg("type:" + type.toString());
+			System.out.println("player type sended " + type.toString());
+		}
+	}
+
+	public void setDataOutputChannel(DataOutputChannel dataChannel) {
+		this.dataChannel = dataChannel;
+	}
+
+	public DataOutputChannel getDataOutputChannel() {
+		if (this.dataChannel != null) {
+			return this.dataChannel;
+		} else {
+			return null;
 		}
 	}
 
@@ -78,19 +72,20 @@ public class ServerConnectionSource {
 			try {
 
 				while (true) {
-					String incoming = inputChannel.readLine();
-					if (incoming.startsWith("request_data")) {
-						// push everything
-
-					} else {
-						// comsManager.process(incoming);
+					String incoming = inputChannel.readLine().toLowerCase();
+					// System.out.println(incoming);
+					if (incoming.equals("request_data")) {
+						if (dataChannel != null && !dataChannel.getProcessedData().equals("noData")) {
+							sendMsg(dataChannel.getProcessedData());
+						}
+					} else if (incoming.startsWith("id:")) {
+						comsManager.process(incoming);
 					}
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println(e);
 			} finally {
 			}
-
 		});
 		inputChannelThread.start();
 		return this;

@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class SaveSettingsData implements Serializable {
 
 	private static final long serialVersionUID = 5953957378100760976L;
-	
+
 	private String Username;
 	private String Ip;
 

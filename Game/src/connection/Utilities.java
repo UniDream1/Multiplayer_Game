@@ -30,7 +30,7 @@ public class Utilities {
 		return this;
 	}
 
-	public boolean isIpAddress() {
+	public boolean isValidIpv4OrIpv6Address() {
 
 		Matcher m1 = VALID_IPV4_PATTERN.matcher(ipAddress);
 		if (m1.matches()) {

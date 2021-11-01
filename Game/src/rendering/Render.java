@@ -59,7 +59,8 @@ public class Render {
 			game.getPickPhase().render(g);  // render sub_Pick_Phase to screen
 			break;
 		case InGame:
-			if(handler.isReady()) {
+			this.game.getGameScene().loadGameScene();
+			if(handler.isReady()) {		
 				handler.render(g); 			//render all Game-Objects including Characters
 			}
 			break;

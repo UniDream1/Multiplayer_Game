@@ -2,12 +2,11 @@ package gameStuff_phases;
 
 import java.awt.Font;
 import java.awt.Graphics;
-import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import connection.ServerConnectionSource;
 import gameobjects_states.GameState;
+import gameobjects_states.Type;
 
 public class QueuePhase {
 
@@ -16,18 +15,16 @@ public class QueuePhase {
 	private ServerConnectionSource connection;
 
 	private int defaultPort = 32768;
-	private InetAddress DEFAULT_IP_ADRESS;
-
 	private int port;
+
 	private String IP = "";
 	private String dots = "";
-	private Long Time = System.currentTimeMillis();
+
+	private long Time = System.currentTimeMillis();
 
 	//@formatter:off
 	public QueuePhase(Game game) {
-		try {
-			this.DEFAULT_IP_ADRESS = Inet4Address.getByName("www.aegame.stevetec.de");
-		} catch (UnknownHostException e) {}
+
 		this.game = game;
 	}
 	//@formatter:on
@@ -59,32 +56,46 @@ public class QueuePhase {
 
 	}
 
-	public void startQueuing() {
+	public void startQueuing(Type playerType) {
+		Long Time = System.currentTimeMillis();
+		new Thread(() -> {
+			setIPAddress(this.game.getSettingsMenu().getIPAddress());
+			System.out.println(this.IP);
+			this.port = this.game.getSettingsMenu().getPort();
+			while (true) {
+				if (System.currentTimeMillis() - Time > 2000l) {
+					try {
 
-		setIPAddress(this.game.getSettingsMenu().getIPAddress());
+						if (!this.game.getIPVerifier().setIp(IP).isValidIpv4OrIpv6Address()) {
+							System.out.println(this.IP + ": " + InetAddress.getByName(IP).getHostAddress());
+							this.connection = new ServerConnectionSource(InetAddress.getByName(IP).getHostAddress(),
+									this.port, game);
+							if (this.connection != null && this.connection.isConnected()) {
+								this.connection.sendPlayerType(playerType);
+								this.connection.inititateInputChannelThread();
+								this.game.setServerConnectionSource(connection);
+								this.game.setGameState(GameState.InGame);
+							}
+						} else {
+							System.out.println("IP: " + this.IP);
+							connection = new ServerConnectionSource(this.IP, defaultPort, game);
+							connection.inititateInputChannelThread();
+							if (this.connection != null && this.connection.isConnected()) {
+								this.connection.sendPlayerType(playerType);
+								this.connection.inititateInputChannelThread();
+								this.game.setServerConnectionSource(connection);
+								this.game.setGameState(GameState.InGame);
+							}
 
-		try {
-
-			if (!this.game.getIPVerifier().setIp(IP).isIpAddress()) {
-
-				connection = new ServerConnectionSource(DEFAULT_IP_ADRESS, this.port, game);
-
-				if (connection != null && connection.isConnected()) {
-					connection.inititateInputChannelThread();
-					game.setServerConnectionSource(connection);
-					game.setGameState(GameState.InGame);
-
+						}
+					} catch (Exception e) {
+						System.out.println(e);
+						this.game.setGameState(GameState.Pickphase_confirm);
+					}
+					break;
 				}
-
-			} else {
-				connection = new ServerConnectionSource(this.DEFAULT_IP_ADRESS, defaultPort, game);
-				connection.inititateInputChannelThread();
-				this.game.setServerConnectionSource(connection);
-
 			}
-		} catch (Exception e) {
-			System.out.println(e);
-		}
+		}).start();
 
 	}
 

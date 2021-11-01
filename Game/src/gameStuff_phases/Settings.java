@@ -61,7 +61,6 @@ public class Settings {
 
 	public Settings(Game game) {
 		this.game = game;
-		// init();
 
 		temp_data = this.game.getSavedSettingsData();
 
@@ -121,18 +120,18 @@ public class Settings {
 			xx = (int) (masterVolumeBounds.getCenterX() - (int) (usernameFieldWidth / 2));
 
 			this.ipX = (int) (this.masterVolumeBounds.getCenterX() - this.ipFieldWidth / 2);
-			this.ipY = (int) (height + g.getFontMetrics().getHeight() * 6 + this.game.getHeight() * 0.1) + 20;
+			this.ipY = (int) (height + g.getFontMetrics().getHeight() * 4 + this.game.getHeight() * 0.1) + 20;
 
 			this.portWidth = g2d.getFontMetrics().stringWidth("A".repeat(this.portField.getCharacterLimit()));
 			this.portX = (int) (this.masterVolumeBounds.getCenterX() - this.portWidth / 2);
-			this.porty = (int) (height + g.getFontMetrics().getHeight() * 8 + this.game.getHeight() * 0.1) + 20;
+			this.porty = (int) (height + g.getFontMetrics().getHeight() * 6 + this.game.getHeight() * 0.1) + 20;
 
 			int saveWidth = g2d.getFontMetrics().stringWidth("save") + 5;
 			int saveHeight = g2d.getFontMetrics().getHeight();
-			this.SaveButton = new RoundRectangle2D.Double(this.masterVolumeBounds.getCenterX() - saveWidth / 2,
+			this.SaveButton = new RoundRectangle2D.Double(this.game.getWidth() / 2 - saveWidth * 1.5,
 					this.game.getHeight() * 0.9, saveWidth, saveHeight, 10, 10);
 
-			this.resetButton = new RoundRectangle2D.Double(this.SaveButton.getX() + 3 * this.SaveButton.getWidth() / 2,
+			this.resetButton = new RoundRectangle2D.Double(this.game.getWidth() / 2 + 0.5 * saveWidth,
 					this.game.getHeight() * 0.9, saveWidth, saveHeight, 10, 10);
 
 			init = true;
@@ -157,24 +156,22 @@ public class Settings {
 		g2d.setColor(Color.white);
 		g2d.setFont(new Font(font, Font.BOLD, 40));
 		g2d.drawString("ID", (int) (this.game.getWidth() * 0.05),
-				(int) (height + g.getFontMetrics().getHeight() * 2 + this.game.getHeight() * 0.1));
-
-		g2d.setFont(new Font(font, Font.BOLD, 30));
-		g2d.drawString("Username", width,
-				(int) (height + g.getFontMetrics().getHeight() * 4.5 + this.game.getHeight() * 0.1));
+				(int) (height + g.getFontMetrics().getHeight() + this.game.getHeight() * 0.05));
 
 		// usernameField bounds
+		g2d.setFont(new Font(font, Font.BOLD, 30));
+		g2d.drawString("Username", width,
+				(int) (height + g2d.getFontMetrics().getHeight() * 1.5 + this.game.getHeight() * 0.1));
 		this.usernameField.setBounds(xx,
-				(int) (height + g.getFontMetrics().getHeight() * 3.5 + this.game.getHeight() * 0.1) - 5,
+				(int) (height + g2d.getFontMetrics().getHeight() * 1.5 + this.game.getHeight() * 0.07),
 				usernameFieldWidth, g2d.getFontMetrics().getHeight() + 5);
-
 		this.usernameField.render(g2d);
 
 		// Connection-field
 		g2d.setColor(Color.white);
 		g2d.setFont(new Font(font, Font.BOLD, 40));
 		g2d.drawString("Connection", (int) (this.game.getWidth() * 0.05),
-				(int) (height + g.getFontMetrics().getHeight() * 6 + this.game.getHeight() * 0.1));
+				(int) (height + g.getFontMetrics().getHeight() * 4 + this.game.getHeight() * 0.1));
 
 		this.IPField.setBounds(ipX, ipY, this.ipFieldWidth, g2d.getFontMetrics().getHeight() + 5);
 		this.IPField.render(g2d);

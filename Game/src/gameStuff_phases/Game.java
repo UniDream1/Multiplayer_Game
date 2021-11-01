@@ -31,7 +31,7 @@ public class Game extends Canvas implements Runnable {
 
 	private Handler handler;
 
-	private GameState gameState = GameState.InGame;
+	private GameState gameState = GameState.Menu;
 
 	private Menu menu;
 
@@ -289,6 +289,23 @@ public class Game extends Canvas implements Runnable {
 		}
 
 		stop();
+	}
+
+	public void EndGame() {
+		try {
+			if (this.mainMenuThemeAudioPlayer != null && this.mainMenuThemeAudioPlayer.isAlive()) {
+
+				this.mainMenuThemeAudioPlayer.join();
+			}
+			if (this.QueuePhaseAudioPlayer != null && this.QueuePhaseAudioPlayer.isAlive()) {
+				this.QueuePhaseAudioPlayer.join();
+			}
+
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		System.exit(0);
 	}
 
 	public GameScene getGameScene() {

@@ -13,6 +13,7 @@ public class AudioPlayer extends Thread {
 
 	private int vol;
 
+
 	public AudioPlayer(Clip clip) {
 		this.audio = clip;
 		this.volManager = (FloatControl) this.audio.getControl(FloatControl.Type.MASTER_GAIN);
@@ -41,15 +42,15 @@ public class AudioPlayer extends Thread {
 
 	@Override
 	public void run() {
+		this.audio.setFramePosition(0);
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
 
 			e.printStackTrace();
 		}
-		this.audio.setFramePosition(0);
-		this.audio.loop(Clip.LOOP_CONTINUOUSLY);
-		this.audio.start();
+			this.audio.loop(Clip.LOOP_CONTINUOUSLY);
+			this.audio.start();
+		
 	}
-
 }
