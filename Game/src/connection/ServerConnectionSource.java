@@ -73,13 +73,13 @@ public class ServerConnectionSource {
 
 				while (true) {
 					String incoming = inputChannel.readLine().toLowerCase();
-					// System.out.println(incoming);
 					if (incoming.equals("request_data")) {
 						if (dataChannel != null && !dataChannel.getProcessedData().equals("noData")) {
 							sendMsg(dataChannel.getProcessedData());
 						}
 					} else if (incoming.startsWith("id:")) {
 						comsManager.process(incoming);
+						System.out.println(incoming);
 					}
 				}
 			} catch (IOException e) {

@@ -46,29 +46,29 @@ public class KeyInputs extends KeyAdapter {
 					this.game.getConnection().setDataOutputChannel(data);
 					init = true;
 				}
-			}
 
-			this.virtualJoystick[0] = 1;
-			this.virtualJoystick[1] = 1;
-			if (!this.keys.contains(e.getKeyCode())) {
-				this.keys.add(e.getKeyCode());
-			}
+				this.virtualJoystick[0] = 1;
+				this.virtualJoystick[1] = 1;
+				if (!this.keys.contains(e.getKeyCode())) {
+					this.keys.add(e.getKeyCode());
+				}
 
-			if (this.keys.contains(KeyEvent.VK_W)) {
-				this.virtualJoystick[0] -= 1;
+				if (this.keys.contains(KeyEvent.VK_W)) {
+					this.virtualJoystick[0] -= 1;
 
-			}
-			if (this.keys.contains(KeyEvent.VK_S)) {
-				this.virtualJoystick[0] += 1;
-			}
-			if (this.keys.contains(KeyEvent.VK_A)) {
-				this.virtualJoystick[1] -= 1;
-			}
-			if (this.keys.contains(KeyEvent.VK_D)) {
-				this.virtualJoystick[1] += 1;
-			}
+				}
+				if (this.keys.contains(KeyEvent.VK_S)) {
+					this.virtualJoystick[0] += 1;
+				}
+				if (this.keys.contains(KeyEvent.VK_A)) {
+					this.virtualJoystick[1] -= 1;
+				}
+				if (this.keys.contains(KeyEvent.VK_D)) {
+					this.virtualJoystick[1] += 1;
+				}
 
-			this.data.setData("move:" + this.moves[this.virtualJoystick[0]][this.virtualJoystick[1]].toString());
+				this.data.setData("move:" + this.moves[this.virtualJoystick[0]][this.virtualJoystick[1]].toString());
+			}
 
 			break;
 
@@ -92,39 +92,39 @@ public class KeyInputs extends KeyAdapter {
 					this.game.getConnection().setDataOutputChannel(data);
 					init = true;
 				}
-			}
-			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-				if (System.currentTimeMillis() - this.cooldownTime > 2000l) {
-					this.game.getConnection().sendMsg("action:fire");
-					this.cooldownTime = System.currentTimeMillis();
+
+				if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+					if (System.currentTimeMillis() - this.cooldownTime > 2000l) {
+						this.game.getConnection().sendMsg("action:fire");
+						this.cooldownTime = System.currentTimeMillis();
+					}
 				}
+
+				this.virtualJoystick[0] = 1;
+				this.virtualJoystick[1] = 1;
+
+				if (!this.keys.contains(e.getKeyCode())) {
+					this.keys.add(e.getKeyCode());
+				}
+
+				if (this.keys.contains(KeyEvent.VK_W)) {
+					this.virtualJoystick[0] -= 1;
+				}
+
+				if (this.keys.contains(KeyEvent.VK_S)) {
+					this.virtualJoystick[0] += 1;
+				}
+
+				if (this.keys.contains(KeyEvent.VK_A)) {
+					this.virtualJoystick[1] -= 1;
+				}
+
+				if (this.keys.contains(KeyEvent.VK_D)) {
+					this.virtualJoystick[1] += 1;
+				}
+
+				this.data.setData("move:" + this.moves[this.virtualJoystick[0]][this.virtualJoystick[1]].toString());
 			}
-
-			this.virtualJoystick[0] = 1;
-			this.virtualJoystick[1] = 1;
-
-			if (!this.keys.contains(e.getKeyCode())) {
-				this.keys.add(e.getKeyCode());
-			}
-
-			if (this.keys.contains(KeyEvent.VK_W)) {
-				this.virtualJoystick[0] -= 1;
-			}
-
-			if (this.keys.contains(KeyEvent.VK_S)) {
-				this.virtualJoystick[0] += 1;
-			}
-
-			if (this.keys.contains(KeyEvent.VK_A)) {
-				this.virtualJoystick[1] -= 1;
-			}
-
-			if (this.keys.contains(KeyEvent.VK_D)) {
-				this.virtualJoystick[1] += 1;
-			}
-
-			this.data.setData("move:" + this.moves[this.virtualJoystick[0]][this.virtualJoystick[1]].toString());
-			
 			break;
 		default:
 			break;
